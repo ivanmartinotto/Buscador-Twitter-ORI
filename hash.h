@@ -3,19 +3,33 @@
 
 #include "set.h"
 
-#define TAM_HASH 1000003 // aumentado para melhorar dispersao
-
+// Cada palavra tem um conjunto de RRNs onde aparece
 typedef struct Palavra {
     char *palavra;
-    SetNode *rrn;
-    struct Palavra *prox;
+    SetNode *rrns;            // Lista de RRNs (set)
+    struct Palavra *prox;     // Próximo elemento da lista encadeada do bucket
 } Palavra;
 
-extern Palavra *tabela[TAM_HASH];
+// Tabela hash genérica
+typedef struct Hash {
+    int TABLE_SIZE;
+    int qtd;
+    Palavra **buckets;        // Vetor de ponteiros para listas de Palavra
+} Hash;
+
+// Cria e libera a hash
+Hash* criaHash(int TABLE_SIZE);
+void liberaHash(Hash* ha);
+
+// Funções de hashing
+int valorString(char *str);
+int chaveDivisao(int chave, int TABLE_SIZE);
+
+// Inserção e busca
+int insereHash(Hash* ha, char *palavra, int rrn);
+Palavra* buscaHash(Hash* ha, char *palavra);
 
 void limpar_palavra(char *str);
-void inserir_palavra(const char *palavra, int rrn);
-void indexar_arquivo(const char *nome_arquivo);
-Palavra* buscar_na_hash(const char *palavra);
+void indexar_arquivo(Hash *ha, const char *nome_arquivo);
 
 #endif

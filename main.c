@@ -3,11 +3,12 @@
 #include <string.h>
 #include <stdbool.h>
 #include <ctype.h>
-#include "set.h"      // ou use #include "set.h" se modularizar
-#include "parser.h"   // contém Expr, parser e avaliação
-#include "hash.h"// função indexar_arquivo e tabela hash global
+#include "set.h"
+#include "parser.h"
+#include "hash.h"
 
-#define MAX_LINHA 1024
+#define MAX_LINHA 2048
+#define TAM_HASH 100003
 
 // Gera conjunto com todos os RRNs do corpus (necessário para NOT)
 SetNode* gerar_conjunto_total(const char *nome_arquivo) {
@@ -53,34 +54,28 @@ void exibir_postagens(const char *nome_arquivo, SetNode *resultados) {
     fclose(f);
 }
 
-// Limpa tokens e árvore entre consultas
-void limpar_tokens_e_arvore(char **tokens, int n, Expr *raiz) {
-    for (int i = 0; i < n; i++) {
-        free(tokens[i]);
-    }
-    liberar_expr(raiz);
-}
-
 int main() {
-    const char *arquivo = "corpus_test.csv";
+    const char *arquivo = "corpus.csv";
 
-    // Passo 1: Indexa todas as palavras do corpus
+    // Cria a hash
+    Hash *ha = criaHash(TAM_HASH);
+
+    // Indexa o arquivo CSV na hash
     printf("Indexando postagens do arquivo %s...\n", arquivo);
-    indexar_arquivo(arquivo);
+    indexar_arquivo(ha, arquivo);
 
-    // Passo 2: Gera conjunto total de RRNs
+    // Gera conjunto total de RRNs
     SetNode *conjunto_total = gerar_conjunto_total(arquivo);
 
-    // Loop de busca
+    // Loop de consulta
     while (1) {
         printf("\nDigite sua consulta booleana (ou 'sair'): ");
         char entrada[512];
-        fgets(entrada, sizeof(entrada), stdin);
+        if (!fgets(entrada, sizeof(entrada), stdin)) break;
 
         if (strncmp(entrada, "sair", 4) == 0)
             break;
 
-        // Prepara tokenização e parsing
         num_tokens = 0;
         pos = 0;
         tokenize(entrada);
@@ -91,8 +86,8 @@ int main() {
             continue;
         }
 
-        // Avalia a expressão
-        SetNode *resultados = avaliar_expr(raiz, conjunto_total);
+        // Avalia a árvore de expressão
+        SetNode *resultados = avaliar_expr(raiz, conjunto_total, ha);
 
         if (resultados) {
             printf("Postagens encontradas:\n");
@@ -102,10 +97,16 @@ int main() {
             printf("Nenhuma postagem encontrada.\n");
         }
 
-        limpar_tokens_e_arvore(tokens, num_tokens, raiz);
+        // Limpeza da árvore e tokens
+        for (int i = 0; i < num_tokens; i++) {
+            free(tokens[i]);
+        }
+        liberar_expr(raiz);
     }
 
     set_free(conjunto_total);
+    liberaHash(ha);
+
     printf("Busca finalizada.\n");
     return 0;
 }

@@ -29,14 +29,13 @@ void tokenize(char *input) {
     }
 }
 
-
 Expr *parse_expr();
 
 Expr *parse_factor() {
     if (pos >= num_tokens) return NULL;
 
     if (strcmp(tokens[pos], "(") == 0) {
-        pos++;  // consume '('
+        pos++;  // consume '(' 
         Expr *e = parse_expr();
         if (pos < num_tokens && strcmp(tokens[pos], ")") == 0)
             pos++;  // consume ')'
@@ -62,7 +61,6 @@ Expr *parse_factor() {
     e->palavra = strdup(palavra);
     e->esq = e->dir = NULL;
     return e;
-
 }
 
 Expr *parse_term() {
@@ -91,36 +89,37 @@ Expr *parse_expr() {
     return left;
 }
 
-
-SetNode *avaliar_expr(Expr *e, SetNode *conjunto_total) {
+SetNode *avaliar_expr(Expr *e, SetNode *conjunto_total, Hash *ha) {
     if (!e) return NULL;
 
     if (e->tipo == OPER_PALAVRA) {
-        Palavra *p = buscar_na_hash(e->palavra);  // função que acessa a tabela hash
-        if (p) return set_copiar(p->rrn);
-        else return NULL;
+        Palavra temp;
+        if (buscaHash(ha, e->palavra)) {
+            return set_copiar(temp.rrns); // copia todos os rrns da palavra
+        } else {
+            return NULL;
+        }
     }
 
     if (e->tipo == OPER_NOT) {
-        SetNode *sub = avaliar_expr(e->esq, conjunto_total);
+        SetNode *sub = avaliar_expr(e->esq, conjunto_total, ha);
         return set_not(conjunto_total, sub);
     }
 
     if (e->tipo == OPER_AND) {
-        SetNode *a = avaliar_expr(e->esq, conjunto_total);
-        SetNode *b = avaliar_expr(e->dir, conjunto_total);
+        SetNode *a = avaliar_expr(e->esq, conjunto_total, ha);
+        SetNode *b = avaliar_expr(e->dir, conjunto_total, ha);
         return set_and(a, b);
     }
 
     if (e->tipo == OPER_OR) {
-        SetNode *a = avaliar_expr(e->esq, conjunto_total);
-        SetNode *b = avaliar_expr(e->dir, conjunto_total);
+        SetNode *a = avaliar_expr(e->esq, conjunto_total, ha);
+        SetNode *b = avaliar_expr(e->dir, conjunto_total, ha);
         return set_or(a, b);
     }
 
     return NULL;
 }
-
 
 void liberar_expr(Expr *e) {
     if (!e) return;

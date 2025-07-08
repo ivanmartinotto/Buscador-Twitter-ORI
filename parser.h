@@ -2,6 +2,7 @@
 #define PARSER_H
 
 #include "set.h"
+#include "hash.h"
 
 typedef enum { OPER_PALAVRA, OPER_AND, OPER_OR, OPER_NOT } TipoNo;
 
@@ -18,7 +19,7 @@ extern int pos;
 
 void tokenize(char *entrada);
 Expr* parse_expr();
-SetNode* avaliar_expr(Expr *e, SetNode *conjunto_total);
+SetNode* avaliar_expr(Expr *e, SetNode *conjunto_total, Hash *ha);
 void liberar_expr(Expr *e);
 
 #endif
