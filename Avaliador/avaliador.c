@@ -1,6 +1,6 @@
 #include "avaliador.h"
-#include "../TabelaHash/hash.h"
 #include "../Parser/parser.h"
+#include "../Indice/indice_invertido.h"
 #include <string.h>
 #include <stdio.h>
 
@@ -15,13 +15,7 @@ Set* avaliarExpressaoRPN(Token rpn[], int numTokens, int totalDocs) {
 
         if (token.tipo == TOKEN_PALAVRA) {
             // Busca a palavra na hash e cria um Set correspondente
-            PostList* lista = buscarPalavra(token.valor);
-            Set* s = criarSet(totalDocs);
-
-            while (lista) {
-                adicionarElemento(s, lista->docID);
-                lista = lista->next;
-            }
+            Set* s = getSetFromPalavra(token.valor, totalDocs);
 
             pilha[++topo] = s;
         } else if (token.tipo == TOKEN_NOT) {

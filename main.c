@@ -1,7 +1,7 @@
 #include "Indexador/indexador.h"
 #include "Parser/parser.h"
 #include "Avaliador/avaliador.h"
-#include "TabelaHash/hash.h"
+#include "Indice/indice_invertido.h"
 #include "Set/set.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -9,9 +9,9 @@
 #include <string.h>
 
 int main() {
-    inicializarHash();
+    inicializarIndice();
 
-    const char* caminho = "corpus_test.csv";
+    const char* caminho = "corpus.csv";
     int totalDocs = processarCSV(caminho);
     printf("Total de postagens indexadas: %d\n", totalDocs);
 
@@ -37,7 +37,7 @@ int main() {
         liberarSet(resultado);
     }
 
-    liberarHash();
+    liberarIndice();
     return 0;
 }
 

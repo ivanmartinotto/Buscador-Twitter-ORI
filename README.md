@@ -11,11 +11,11 @@ O trabalho segue os requisitos da disciplina **Organização e Recuperação da 
 ## 📂 Estrutura do Projeto
 
 ```
-├── hash.h / hash.c        # Tabela hash que indexa palavras por RRN
-├── set.h / set.c          # Conjunto de RRNs (operações AND, OR, NOT)
-├── parser.h / parser.c    # Parser de expressões booleanas e avaliação
-├── main.c                 # Interface principal: leitura do CSV e busca
-└── corpus.csv              # Arquivo com as postagens (formato CSV)
+├── indice_invertido.h / indice_invertido.c        # Tabela hash que indexa palavras por RRN
+├── set.h / set.c                                  # Conjunto de RRNs (operações AND, OR, NOT)
+├── parser.h / parser.c                            # Parser de expressões booleanas e avaliação
+├── main.c                                         # Interface principal: leitura do CSV e busca
+└── corpus.csv                                     # Arquivo com as postagens (formato CSV)
 ```
 
 ---
@@ -40,12 +40,12 @@ Exemplo:
 
 No terminal (Linux/macOS):
 ```bash
-gcc main.c Parser/parser.c TabelaHash/hash.c Indexador/indexador.c Avaliador/avaliador.c Set/set.c -o buscador
+gcc main.c Parser/parser.c Indice/indice_invertido.c Indexador/indexador.c Avaliador/avaliador.c Set/set.c -o buscador
 ```
 
 No Windows (MinGW):
 ```bash
-gcc main.c Parser/parser.c TabelaHash/hash.c Indexador/indexador.c Avaliador/avaliador.c Set/set.c -o buscador.exe
+gcc main.c Parser/parser.c Indice/indice_invertido.c Indexador/indexador.c Avaliador/avaliador.c Set/set.c -o buscador.exe
 ```
 
 ### ✅ 2. Execute o programa:
@@ -67,10 +67,7 @@ A busca suporta:
 - Palavras simples sem operadores
 
 ---
-
-## ℹ️ Observações importantes
-
-- Atualmente a indexação do arquivo está muito lenta para indexar o arquivo original com 1.6 milhões de linhas. Use o arquivo `corpus_test.csv` que contém apenas os 100 primeiros tweets para fins de teste. 
+ 
 - Saia do programa digitando:
 ```
 sair

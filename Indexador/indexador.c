@@ -1,5 +1,5 @@
 #include "indexador.h"
-#include "../TabelaHash/hash.h"
+#include "../Indice/indice_invertido.h"
 #include <string.h>
 #include <ctype.h>
 
@@ -31,7 +31,7 @@ void processarTexto(const char* texto, int docID) {
         } else {
             if (len > 0) {
                 palavra[len] = '\0';
-                inserirPalavra(palavra, docID);
+                indexarPalavra(palavra, docID);
                 len = 0;
             }
         }
@@ -40,7 +40,7 @@ void processarTexto(const char* texto, int docID) {
 
     if (len > 0) {
         palavra[len] = '\0';
-        inserirPalavra(palavra, docID);
+        indexarPalavra(palavra, docID);
     }
 }
 
