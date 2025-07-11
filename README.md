@@ -40,12 +40,12 @@ Exemplo:
 
 No terminal (Linux/macOS):
 ```bash
-gcc -o buscador main.c hash.c set.c parser.c -Wall -O2
+gcc main.c Parser/parser.c TabelaHash/hash.c Indexador/indexador.c Avaliador/avaliador.c Set/set.c -o buscador
 ```
 
 No Windows (MinGW):
 ```bash
-gcc -o buscador.exe main.c hash.c set.c parser.c -Wall -O2
+gcc main.c Parser/parser.c TabelaHash/hash.c Indexador/indexador.c Avaliador/avaliador.c Set/set.c -o buscador.exe
 ```
 
 ### ✅ 2. Execute o programa:
@@ -70,9 +70,7 @@ A busca suporta:
 
 ## ℹ️ Observações importantes
 
-- Durante a indexação inicial, o programa pode levar tempo proporcional ao tamanho do arquivo.
-- A busca não diferencia maiúsculas e minúsculas.
-- Pontuações e caracteres especiais são ignorados ao indexar as palavras.
+- Atualmente a indexação do arquivo está muito lenta para indexar o arquivo original com 1.6 milhões de linhas. Use o arquivo `corpus_test.csv` que contém apenas os 100 primeiros tweets para fins de teste. 
 - Saia do programa digitando:
 ```
 sair
