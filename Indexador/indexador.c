@@ -62,7 +62,7 @@ int processarCSV(const char* caminhoCSV) {
     char linha[TAM_LINHA];
 
     while (fgets(linha, TAM_LINHA, f)) {
-        offsets[docID] = ftell(f) - strlen(linha);
+        offsets[docID] = ftell(f) - strlen(linha) - 1;
 
         // Cópia da linha para strtok
         char* copiaLinha = strdup(linha);
