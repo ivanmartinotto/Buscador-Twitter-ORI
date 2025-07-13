@@ -2,109 +2,102 @@
 #include "../Indice/indice_invertido.h"
 #include <string.h>
 #include <ctype.h>
+#include <stdlib.h>
+#include <stdio.h>
 
-#define TAM_TOKEN 128
+long* offsets = NULL;
 
-long offsets[MAX_DOCS + 1] = {0};
-
-// Remove pontuações e converte para minúsculo
 void normalizarPalavra(char* str) {
     int j = 0;
     for (int i = 0; str[i]; i++) {
-        if (isalnum((unsigned char)str[i])) {
-            str[j++] = tolower(str[i]);
+        unsigned char c = (unsigned char)str[i];
+        if (isalnum(c)) {
+            str[j++] = tolower(c);
         }
     }
     str[j] = '\0';
 }
 
-// Quebra texto em palavras, insere cada uma na hash com docID
 void processarTexto(const char* texto, int docID) {
-    const char* p = texto;
-    char palavra[TAM_TOKEN];
-    int len = 0;
+    char copia[TAM_LINHA];
+    strncpy(copia, texto, TAM_LINHA);
+    copia[TAM_LINHA - 1] = '\0';
 
-    while (*p) {
-        if (isalnum((unsigned char)*p)) {
-            if (len < TAM_TOKEN - 1)
-                palavra[len++] = tolower(*p);
-        } else {
-            if (len > 0) {
-                palavra[len] = '\0';
-                indexarPalavra(palavra, docID);
-                len = 0;
+    char* token = strtok(copia, " ");
+    char palavrasInseridas[512][TAM_TOKEN];
+    int count = 0;
+
+    while (token) {
+        char palavra[TAM_TOKEN];
+        strncpy(palavra, token, TAM_TOKEN);
+        palavra[TAM_TOKEN - 1] = '\0';
+        normalizarPalavra(palavra);
+
+        int jaInserida = 0;
+        for (int i = 0; i < count; i++) {
+            if (strcmp(palavrasInseridas[i], palavra) == 0) {
+                jaInserida = 1;
+                break;
             }
         }
-        p++;
-    }
 
-    if (len > 0) {
-        palavra[len] = '\0';
-        indexarPalavra(palavra, docID);
+        if (!jaInserida && strlen(palavra) > 0) {
+            strcpy(palavrasInseridas[count++], palavra);
+            indexarPalavra(palavra, docID);
+        }
+
+        token = strtok(NULL, " ");
     }
 }
 
 int processarCSV(const char* caminhoCSV) {
-    FILE* arquivo = fopen(caminhoCSV, "r");
-    if (!arquivo) {
-        perror("Erro ao abrir o arquivo CSV");
+    FILE* f = fopen(caminhoCSV, "r");
+    if (!f) {
+        perror("Erro abrindo CSV");
         return 0;
     }
 
+    offsets = malloc(sizeof(long) * MAX_DOCS);
+    int docID = 0;
     char linha[TAM_LINHA];
-    int total = 1;
 
-    // Cabeçalho
-    fgets(linha, TAM_LINHA, arquivo);
-    printf("Total de linhas processadas:");
-    while (!feof(arquivo)) {
-        long pos = ftell(arquivo);  // offset antes da leitura
-        if (!fgets(linha, TAM_LINHA, arquivo)) break;
+    while (fgets(linha, TAM_LINHA, f)) {
+        offsets[docID] = ftell(f) - strlen(linha);
 
-        int docID;
-        char* campo1 = strtok(linha, ",");
-        char* campo2 = strtok(NULL, ",");
-        char* campo3 = strtok(NULL, "\n");
+        // Cópia da linha para strtok
+        char* copiaLinha = strdup(linha);
+        if (!copiaLinha) continue;
 
-        if (campo1 && campo3) {
-            docID = atoi(campo1);
-            if (docID >= 1 && docID <= MAX_DOCS) {
-                offsets[docID] = pos;  // salva a posição da linha
-                processarTexto(campo3, docID);
-                total++;
-                printf("%d\n", total);
-            }
+        // ignora o ID
+        strtok(copiaLinha, ",");
+        
+        // pula os zeros e uns antes do texto
+        strtok(NULL, ",");
+        
+        // pega o texto
+        char* texto = strtok(NULL, "\n");  
+
+        if (texto) {
+
+            processarTexto(texto, docID);
         }
+
+        free(copiaLinha);
+        docID++;
     }
 
-    fclose(arquivo);
-    return total;
+    fclose(f);
+    return docID;
 }
 
 void exibirTextoOriginal(const char* caminhoCSV, int docID) {
-    if (docID < 1 || docID > MAX_DOCS || offsets[docID] == 0) {
-        printf("[docID %d inválido ou não encontrado]\n", docID);
-        return;
-    }
+    FILE* f = fopen(caminhoCSV, "r");
+    if (!f || !offsets) return;
 
-    FILE* arquivo = fopen(caminhoCSV, "r");
-    if (!arquivo) {
-        perror("Erro ao reabrir o arquivo CSV");
-        return;
-    }
-
-    fseek(arquivo, offsets[docID], SEEK_SET);
-
+    fseek(f, offsets[docID], SEEK_SET);
     char linha[TAM_LINHA];
-    if (fgets(linha, TAM_LINHA, arquivo)) {
-        char* campo1 = strtok(linha, ",");
-        char* campo2 = strtok(NULL, ",");
-        char* campo3 = strtok(NULL, "\n");
-
-        if (campo3) {
-            printf("[%d] %s\n", docID, campo3);
-        }
+    if (fgets(linha, TAM_LINHA, f)) {
+        printf("%s", linha);
     }
-
-    fclose(arquivo);
+    fclose(f);
 }
