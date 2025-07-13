@@ -1,6 +1,7 @@
 #include "avaliador.h"
 #include "../Parser/parser.h"
 #include "../Indice/indice_invertido.h"
+#include "../Indexador/indexador.h"  // para normalizarPalavra
 #include <string.h>
 #include <stdio.h>
 
@@ -14,10 +15,16 @@ Set* avaliarExpressaoRPN(Token rpn[], int numTokens, int totalDocs) {
         Token token = rpn[i];
 
         if (token.tipo == TOKEN_PALAVRA) {
-            // Busca a palavra na hash e cria um Set correspondente
-            Set* s = getSetFromPalavra(token.valor, totalDocs);
+            // Normaliza a palavra antes da busca
+            char palavraNormalizada[TAM_TOKEN];
+            strncpy(palavraNormalizada, token.valor, TAM_TOKEN);
+            palavraNormalizada[TAM_TOKEN - 1] = '\0';
+            normalizarPalavra(palavraNormalizada);
 
+            // Busca a palavra na hash e cria um Set correspondente
+            Set* s = getSetFromPalavra(palavraNormalizada, totalDocs);
             pilha[++topo] = s;
+
         } else if (token.tipo == TOKEN_NOT) {
             if (topo < 0) {
                 fprintf(stderr, "Erro: NOT sem operando.\n");
@@ -29,6 +36,7 @@ Set* avaliarExpressaoRPN(Token rpn[], int numTokens, int totalDocs) {
             liberarSet(op);
             liberarSet(universo);
             pilha[++topo] = result;
+
         } else if (token.tipo == TOKEN_AND || token.tipo == TOKEN_OR) {
             if (topo < 1) {
                 fprintf(stderr, "Erro: operador binário com menos de 2 operandos.\n");
