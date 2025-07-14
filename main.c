@@ -8,6 +8,8 @@
 #include <ctype.h>
 #include <string.h>
 
+// Eduardo Sanzovo Quaggio 813641
+
 int main() {
     printf("Aguarde, indexando os dados.\n");
     inicializarIndice();
