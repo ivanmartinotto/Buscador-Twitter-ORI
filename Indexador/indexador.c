@@ -78,7 +78,6 @@ int processarCSV(const char* caminhoCSV) {
         char* texto = strtok(NULL, "\n");  
 
         if (texto) {
-
             processarTexto(texto, docID);
         }
 

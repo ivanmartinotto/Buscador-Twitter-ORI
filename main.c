@@ -27,10 +27,12 @@ int main() {
 
         Set* resultado = avaliarExpressaoRPN(rpn, nrpn, totalDocs);
 
-        printf("\nPostagens encontradas:\n");
-        for (int i = 0; i < totalDocs; i++) {
-            if (contemElemento(resultado, i)) {
-                exibirTextoOriginal(caminho, i);
+        if(resultado != NULL){
+            printf("\nPostagens encontradas:\n");
+            for (int i = 0; i < totalDocs; i++) {
+                if (contemElemento(resultado, i)) {
+                    exibirTextoOriginal(caminho, i);
+                }
             }
         }
 
