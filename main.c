@@ -9,6 +9,7 @@
 #include <string.h>
 
 int main() {
+    printf("Aguarde, indexando os dados.\n");
     inicializarIndice();
 
     const char* caminho = "corpus.csv";
@@ -17,7 +18,7 @@ int main() {
 
     while (1) {
         char expressao[512];
-        printf("\nDigite uma expressão (ou 'sair'): ");
+        printf("\nDigite uma expressao (ou 'sair'): ");
         fgets(expressao, sizeof(expressao), stdin);
         if (strncmp(expressao, "sair", 4) == 0) break;
 
@@ -39,6 +40,7 @@ int main() {
         liberarSet(resultado);
     }
 
+    printf("Programa encerrado.\n");
     liberarIndice();
     return 0;
 }
