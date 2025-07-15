@@ -9,6 +9,7 @@
 #include <string.h>
 
 // Eduardo Sanzovo Quaggio 813641
+// Gustavo Cesar Bento Laurindo 821402
 
 int main() {
     printf("Aguarde, indexando os dados.\n");
