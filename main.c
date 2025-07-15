@@ -11,6 +11,7 @@
 // Eduardo Sanzovo Quaggio 813641
 // Gustavo Cesar Bento Laurindo 821402
 // Ivan Fernando Rizzi Villalba 821478
+// Ivan Mateus Azevedo Martinotto 822410
 
 int main() {
     printf("Aguarde, indexando os dados.\n");
