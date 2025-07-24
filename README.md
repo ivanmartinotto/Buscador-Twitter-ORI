@@ -8,18 +8,6 @@ O trabalho segue os requisitos da disciplina **Organização e Recuperação da 
 
 ---
 
-## 📂 Estrutura do Projeto
-
-```
-├── indice_invertido.h / indice_invertido.c        # Tabela hash que indexa palavras por RRN
-├── set.h / set.c                                  # Conjunto de RRNs (operações AND, OR, NOT)
-├── parser.h / parser.c                            # Parser de expressões booleanas e avaliação
-├── main.c                                         # Interface principal: leitura do CSV e busca
-└── corpus.csv                                     # Arquivo com as postagens (formato CSV)
-```
-
----
-
 ## 📜 Formato do Arquivo CSV
 Cada linha do arquivo `corpus.csv` deve conter:
 ```
